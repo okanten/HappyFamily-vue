@@ -1,7 +1,7 @@
 <template>
     <section class="splash">
-      <Button additionalClass="background-join" text="Join existing game" />
-      <Button text="Start new game" />
+      <Button :onClick="handleJoin" additionalClass="background-join" text="Join existing game" />
+      <Button :onClick="handleNew" text="Start new game" />
     </section>
 </template>
 
@@ -12,6 +12,14 @@
     props: {},
     components: {
       Button,
+    },
+    methods: {
+      handleJoin() {
+        alert('Join');
+      },
+      handleNew() {
+        alert('New');
+      }
     }
   }
 </script>

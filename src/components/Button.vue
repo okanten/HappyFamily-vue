@@ -1,5 +1,5 @@
 <template>
-  <button class="animated-button" :class="additionalClass" >{{ text }}</button>
+  <button @click="onClick" class="animated-button" :class="additionalClass" >{{ text }}</button>
 </template>
 <script>
   export default {
@@ -16,6 +16,10 @@
       additionalClass: {
         type: String,
         default: '',
+      },
+      onClick: {
+        type: Function,
+        required: true,
       }
     }
   }
