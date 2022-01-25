@@ -6,7 +6,7 @@
 </template>
 
 <script>
-  import Button from '@/components/Button.vue'
+  import Button from '@/components/input/Button.vue'
   export default {
     name: 'Splash',
     props: {},
@@ -15,10 +15,10 @@
     },
     methods: {
       handleJoin() {
-        alert('Join');
+        this.$router.push({ name: "JoinBlank" })
       },
       handleNew() {
-        alert('New');
+        this.$router.push({ name: "CreateGame" })
       }
     }
   }

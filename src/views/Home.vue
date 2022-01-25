@@ -9,7 +9,7 @@
 
 import Header from '@/components/Header'
 import Splash from '@/components/Splash'
-import Textbox from '@/components/Textbox'
+import Textbox from '@/components/input/Textbox'
 
 export default {
   name: 'Home',
@@ -17,6 +17,6 @@ export default {
     Header,
     Splash,
     Textbox,
-  }
+  },
 }
 </script>

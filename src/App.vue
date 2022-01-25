@@ -8,7 +8,9 @@
 
 <style lang="scss">
 header {
+  
 }
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -29,7 +31,6 @@ header {
     }
   }
 }
-
 
 .animated-button {
   border-style: none;
@@ -67,7 +68,5 @@ header {
   50%{background-position:72% 100%}
   100%{background-position:29% 0%}
 }
-
-
 
 </style>
