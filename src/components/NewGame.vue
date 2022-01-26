@@ -44,6 +44,11 @@ import Button from '@/components/input/Button.vue'
         return this.$store.state.instanceUrl + "join/" + this.$store.state.gameId
       }
     },
+    data() {
+      return {
+        restartGame: false
+      }
+    },
     methods: {
       fetchNewGame() {
         fetch('http://localhost:8000/create')

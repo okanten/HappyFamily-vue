@@ -2,9 +2,17 @@
   <div class="home">
     <Header title="Happy Family!"/>
     <NewGame /> 
-    <Button :onClick="readySubmit" text="I am ready to submit my word" />
+    <div v-if="!hasSubmitted">
+      <Button :onClick="readySubmit" :text="readySubmitText" />
+    </div>
     <div v-if="isReadyToSubmit">
-      <p>Disconnect from any screen sharing application and hide your screen to keep your word a secret</p>
+      <SubmitWord />
+    </div>
+    <div v-if="hasSubmitted">
+      <LockGame />
+    </div>
+    <div v-if="hasLockedGame">
+      <DisplayWords />
     </div>
   </div>
 </template>
@@ -13,6 +21,9 @@
 import Header from '@/components/Header'
 import NewGame from '@/components/NewGame'
 import Button from '@/components/input/Button'
+import SubmitWord from '@/components/SubmitWord'
+import LockGame from '@/components/LockGame'
+import DisplayWords from '@/components/DisplayWords'
 
 
 export default {
@@ -21,6 +32,9 @@ export default {
     Header,
     NewGame,
     Button,
+    SubmitWord,
+    LockGame,
+    DisplayWords,
   },
   computed: {
     gameId() {
@@ -28,16 +42,31 @@ export default {
     },
     gamePassword() {  
       return this.$store.state.gameIdPassword
+    },
+    
+    hasSubmitted() {
+      return this.$store.state.hasSubmittedWord
+    },
+    
+    hasLockedGame() {
+      return this.$store.state.hasLockedGame
     }
   },
   data() {
     return {
       isReadyToSubmit: false,
+      readySubmitText: 'I am ready to submit my word',
     }
   },
   methods: {
     readySubmit() {
       this.isReadyToSubmit = !this.isReadyToSubmit;
+      if(this.isReadyToSubmit) {
+        this.readySubmitText = 'Hide my word!'
+      } else {
+        this.readySubmitText = 'I am ready to submit my word'
+      }
+
     }
   }
 }

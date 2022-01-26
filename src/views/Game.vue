@@ -1,23 +1,19 @@
 <template>
   <div class="home">
     <Header title="Happy Family!"/>
-    <Textbox v-model:textValue="txtGameWord" placeholderValue="Racoon" />
-    <Button :onClick="joinGame" text="Submit word" />
+    <SubmitWord />
   </div>
 </template>
 
 <script>
 import Header from '@/components/Header'
-import Textbox from '@/components/input/Textbox'
-import Button from '@/components/input/Button'
-
+import SubmitWord from '@/components/SubmitWord'
 
 export default {
   name: 'CreateGame',
   components: {
     Header,
-    Textbox,
-    Button,
+    SubmitWord,
   },
   mounted() {
 
@@ -32,9 +28,6 @@ export default {
     }
   },
   methods: {
-    joinGame() {
-      console.log(this.gameId)
-    }
   }
 }
 </script>
