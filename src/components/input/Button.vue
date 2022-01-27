@@ -29,5 +29,9 @@
   button {
     margin-bottom: 1.2em;
     width: 100%;
+    padding-top: 1.5em;
+    padding-bottom: 1.5em;
   }
+
+
 </style>

@@ -19,11 +19,11 @@
 
 <script>
 import Header from '@/components/Header'
-import NewGame from '@/components/NewGame'
+import NewGame from '@/components/game/NewGame'
 import Button from '@/components/input/Button'
-import SubmitWord from '@/components/SubmitWord'
-import LockGame from '@/components/LockGame'
-import DisplayWords from '@/components/DisplayWords'
+import SubmitWord from '@/components/game/SubmitWord'
+import LockGame from '@/components/game/LockGame'
+import DisplayWords from '@/components/game/DisplayWords'
 
 
 export default {

@@ -1,5 +1,5 @@
 <template>
-  <Header title="Know Your Family!"/>
+  <Header title="Happy Family!"/>
   <div class="rules">
     <h2>Roles</h2>
       <details>

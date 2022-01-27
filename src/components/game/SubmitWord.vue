@@ -2,7 +2,7 @@
     <Error :errors="errors" />
     <div v-if="!submitted">
       <p>Disconnect from any screen sharing application and hide your screen to keep your word a secret</p>
-      <Textbox v-model:textValue="txtGameWord" placeholderValue="Racoon" />
+      <Textbox :onEnter="onEnter" v-model:textValue="txtGameWord" placeholderValue="Racoon" />
       <Button :onClick="submitWord" text="Submit Word" />
     </div>
     <div v-if="submitted">
@@ -36,6 +36,9 @@ export default {
     }
   },
   methods: {
+    onEnter() {
+      this.submitWord()
+    },
     submitWord() {
       const gameWord = this.txtGameWord
       this.errors = []

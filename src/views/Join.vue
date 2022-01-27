@@ -4,7 +4,7 @@
     <div v-for="(error, index) in errors" :key="index">
       <p class="error">{{ error }}</p>
     </div>
-    <Textbox v-model:textValue="txtGameId" placeholderValue="PaleDisk" />
+    <Textbox :onEnter="joinGame" v-model:textValue="txtGameId" placeholderValue="PaleDisk" />
     <p>{{ this.$router.query }}</p>
     <Button :onClick="joinGame" text="Join Game" />
   </div>

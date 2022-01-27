@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <Header title="Know Your Family!"/>
+    <Header title="Happy Family!"/>
     <Splash />
   </div>
 </template>

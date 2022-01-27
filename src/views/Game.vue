@@ -7,7 +7,7 @@
 
 <script>
 import Header from '@/components/Header'
-import SubmitWord from '@/components/SubmitWord'
+import SubmitWord from '@/components/game/SubmitWord'
 
 export default {
   name: 'CreateGame',
@@ -21,6 +21,8 @@ export default {
       this.$router.push({ name: "Home" })
     }
 
+  },
+  computed: {
   },
   data() {
     return {
