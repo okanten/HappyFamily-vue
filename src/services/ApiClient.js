@@ -23,10 +23,6 @@ class ApiClient {
     return http.post(`/game/${gameId}/add`, data)
   }
   
-  test() {
-    return "test"
-  }
-
 }
 
 export default new ApiClient()
