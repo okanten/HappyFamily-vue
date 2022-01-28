@@ -8,6 +8,7 @@
 <script>
 
 import Button from '@/components/input/Button.vue'
+import ApiClient from '@/services/ApiClient'
 
   export default {
     name: 'NewGame',
@@ -28,12 +29,6 @@ import Button from '@/components/input/Button.vue'
         }
         return this.$store.state.gameId
       },
-      gamePassword() {
-        if (!this.$store.state.gameId) {
-          return 'loading...'
-        }
-        return this.$store.state.gameIdPassword
-      },
       instanceUrl() {
         return this.$store.state.instanceUrl
       },
@@ -51,14 +46,18 @@ import Button from '@/components/input/Button.vue'
     },
     methods: {
       fetchNewGame() {
-        fetch('http://localhost:8000/create')
-        .then(res => res.json())
-        .then(data => {
-          this.$store.commit('setGameId', data.id)
-          this.$store.commit('setGamePassword', data.password)
-          this.setLoadedClassList()
-        })
-        .catch(err => console.log(err.message))
+        ApiClient.createGame()
+        .then((res => {
+          console.log(res)
+          if (res.status == 200) {
+            this.$store.commit('setGameId', res.data.id)
+            this.$store.commit('setGamePassword', res.data.password)
+            this.setLoadedClassList()
+          } else {
+            throw new Error(res)
+          }
+        }))
+        .catch((e => console.log(e)))
       },
       setLoadedClassList() {
         document.getElementById("gameId").classList.add("loaded")

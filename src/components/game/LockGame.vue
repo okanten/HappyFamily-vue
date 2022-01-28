@@ -6,6 +6,7 @@
 <script>
 import Button from '@/components/input/Button'
 import Error from '@/components/validation/Error'
+import ApiClient from '@/services/ApiClient'
 
 export default {
   name: 'SubmitWord',
@@ -30,83 +31,54 @@ export default {
   data() {
     return {
       gameLocked: this.$store.state.hasLockedGame,
+      errors: [],
+      success: null,
     }
   },
   methods: {
     changeGameStatus() {
 
-      const gameIdPassword = this.$store.state.gameIdPassword
-      const options = {
-        method: 'POST',
-        body: JSON.stringify({ password: gameIdPassword }),
-        headers: {
-          'Content-Type': 'application/json'
-        },
-      }
-      
-      if(this.gameLocked) {
-        this.unlockGame(options)
-      } else {
-        this.lockGame(options)
-      }
-    },
-    unlockGame(options) {
-
+      // reset errors and success
       this.errors = []
-      this.success = null
+      this.success = null      
 
       const gameId = this.$store.state.gameId
+      let data = { password: this.$store.state.gameIdPassword }
       
-      let status = ''
-      
-      const url = 'http://localhost:8000/game/' + gameId + "/open"
-      fetch(url, options)
-      .then(res => {
-        let json = res.json()
-        status = res.status
-        console.log(status)
-        
-        return json 
-      })
-      .then(data => {
-        if (status == 200) {
+      if(this.gameLocked) {
+        this.unlockGame(gameId, data)
+      } else {
+        this.lockGame(gameId, data)
+      }
+    },
+    unlockGame(gameId, data) {
+ 
+      ApiClient.openGame(gameId, data)
+      .then((res => {
+        if (res.status === 200 || res.status === 201) {
           this.gameLocked = false 
           this.$store.commit('setLockedGame', false)
           this.success = data.message
         } else {
           this.errors.push(data.message)
         }
-      })
+      }))
       .catch(err => console.log(err.message))
     },
 
-    lockGame(options) {
-      this.errors = []
-      this.success = null
-
-      const gameId = this.$store.state.gameId
+    lockGame(gameId, data) {
       
-      let status = ''
-      
-      const url = 'http://localhost:8000/game/' + gameId + "/close"
-      fetch(url, options)
-      .then(res => {
-        let json = res.json()
-        status = res.status
-        console.log(status)
-        
-        return json 
-      })
-      .then(data => {
-        if (status == 200) {
-          this.gameLocked = true 
+      ApiClient.closeGame(gameId, data)
+      .then((res => {
+        if (res.status === 200 || res.status === 201) {
+          this.gameLocked = true
           this.$store.commit('setLockedGame', true)
-          this.success = data.message
+          this.success = res.data.message
         } else {
-          this.errors.push(data.message)
+          this.errors.push(res.data.message)
         }
-      })
-      .catch(err => console.log(err.message))
+      }))
+      .catch((e => console.log(e.message)))
     },
   }
 }

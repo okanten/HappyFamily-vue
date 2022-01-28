@@ -1,6 +1,5 @@
 <template>
-  <Button :onClick="handleClick" :text="btnDisplayWordsText" />
-  
+  <Button :onClick="handleClick" :text="btnDisplayWordsText" /> 
   <div v-if="isDisplayingWords"> 
     <div v-for="(word, index) in words" :key="index"> 
       <p>{{ word }}</p>
@@ -11,13 +10,12 @@
 <script>
 
 import Button from '@/components/input/Button.vue'
+import ApiClient from '@/services/ApiClient'
 
   export default {
     name: 'DisplayWords',
     components: {
       Button
-    },
-    mounted() {
     },
     computed: {
       words() {
@@ -42,7 +40,6 @@ import Button from '@/components/input/Button.vue'
         }
       },
       hideWords() {
-        console.log('lol')
         this.isDisplayingWords = false
       },
       displayWords() {
@@ -51,38 +48,19 @@ import Button from '@/components/input/Button.vue'
         } else {    
           const gameId = this.$store.state.gameId
           const gameIdPassword = this.$store.state.gameIdPassword
-          const options = {
-            method: 'POST',
-            body: JSON.stringify({ password: gameIdPassword }),
-            headers: {
-              'Content-Type': 'application/json'
-            },
-          }
-          
-          let status = ''
 
-          const url = 'http://localhost:8000/game/' + gameId + "/words"
-          fetch(url, options)
-          .then(res => {
-            let json = res.json()
-            status = res.status
-            console.log(status)
-            
-            return json 
-          })
-          .then(data => {
-            if (status == 200) {
-              this.success = data.message
-              console.log(data.words)
-              this.$store.commit('setSubmittedWords', data.words)
-              console.log(this.$store.state.submittedWords)
+          ApiClient.getWords(gameId, { password: gameIdPassword })
+          .then((res => {
+            if(res.status === 200) {
+              this.success = res.data.message
+              this.$store.commit('setSubmittedWords', res.data.words)
               this.isDisplayingWords = true
               this.hasRetrievedWords = true
             } else {
-              this.errors.push(data.message)
+              this.errors.push(res.data.message)
             }
-          })
-          .catch(err => console.log(err.message))
+          }))
+          .catch((e => console.log(e)))  
         }
       }
     }

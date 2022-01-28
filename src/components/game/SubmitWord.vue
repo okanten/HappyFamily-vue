@@ -14,6 +14,7 @@
 import Textbox from '@/components/input/Textbox'
 import Button from '@/components/input/Button'
 import Error from '@/components/validation/Error'
+import ApiClient from '@/services/ApiClient'
 
 export default {
   name: 'SubmitWord',
@@ -47,37 +48,18 @@ export default {
         this.errors.push("The word cannot be empty")
       }
       if(this.errors.length == 0) {
-
         const gameId = this.$store.state.gameId
-        
-        const options = {
-          method: 'POST',
-          body: JSON.stringify({ gameWord: gameWord }),
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        }
-        
-        let status = ''
-        const url = 'http://localhost:8000/game/' + gameId + "/add"
-        fetch(url, options)
-        .then(res => {
-          let json = res.json()
-          status = res.status
-          console.log(status)
-          
-          return json 
-        })
-        .then(data => {
-          if(status != 201) {
-            this.errors.push(data.message)
-          } else {
+        ApiClient.submitWord(gameId, { gameWord })
+        .then((res => {
+          if (res.status === 201) {
             this.success = "Word submitted!"
             this.submitted = true
             this.$store.commit('setSubmittedWord', true)
+          } else {
+            this.errors.push(res.data.message)
           }
-        })
-        .catch(err => console.log(err.message))
+        }))
+        .catch((e => console.log(e)))
       }
     },
   }
