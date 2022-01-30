@@ -3,8 +3,12 @@
     <input type="text" @input="handleInput" v-on:keyup.enter="onEnter" :value="textValue" :placeholder="placeholderValue" />
   </div>
 </template>
-<script>
-  export default {
+
+<script lang="ts">
+
+  import { Options, Vue } from 'vue-class-component';
+  
+  @Options({
     name: 'Textbox',
     props: {
       textValue: {
@@ -19,12 +23,14 @@
       },
     },
     methods: {
-      handleInput(event) {
+      handleInput(event: any) {
         this.$emit("update:textValue", event.target.value)
       }
       
     }
-  }
+  })
+
+  export default class Textbox extends Vue {}
 </script>
 
 <style lang="scss" scoped>

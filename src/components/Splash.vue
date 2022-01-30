@@ -5,9 +5,11 @@
     </section>
 </template>
 
-<script>
-  import Button from '@/components/input/Button.vue'
-  export default {
+<script lang="ts">
+  import { defineComponent } from 'vue'
+  import Button from '@/components/input/Button.vue';
+  
+  export default defineComponent({
     name: 'Splash',
     props: {},
     components: {
@@ -21,7 +23,7 @@
         this.$router.push({ name: "CreateGame" })
       }
     }
-  }
+  })
 </script>
 
 <style scoped>

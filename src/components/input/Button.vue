@@ -1,8 +1,10 @@
 <template>
   <button @click="onClick" class="animated-button" :class="additionalClass" >{{ text }}</button>
 </template>
-<script>
-  export default {
+<script lang="ts">
+  import { defineComponent } from 'vue';
+  
+  export default defineComponent({
     name: 'Button',
     props: {
       text: {
@@ -22,7 +24,7 @@
         required: true,
       }
     }
-  }
+  })
 </script>
 
 <style scoped>

@@ -5,18 +5,19 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { Options, Vue } from 'vue-class-component';
 
-import Header from '@/components/Header'
-import Splash from '@/components/Splash'
-import Textbox from '@/components/input/Textbox'
+import Header from '@/components/Header.vue'
+import Splash from '@/components/Splash.vue'
+import Textbox from '@/components/input/Textbox.vue'
 
-export default {
-  name: 'Home',
+@Options({
   components: {
     Header,
     Splash,
     Textbox,
   },
-}
+})
+export default class Home extends Vue {}
 </script>

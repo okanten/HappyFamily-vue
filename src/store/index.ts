@@ -14,24 +14,24 @@ const store = createStore({
     }
   },
   mutations: {
-    setGameId(state, newValue) {
+    setGameId(state: any, newValue: string) {
       state.gameId = newValue
     },
 
-    setGamePassword(state, newValue) {
+    setGamePassword(state: any, newValue: string) {
       state.gameIdPassword = newValue
     },
     
-    setSubmittedWord(state, newValue) {
+    setSubmittedWord(state: any, newValue: string) {
       state.hasSubmittedWord = newValue
     },
 
     
-    setLockedGame(state, newValue) {
+    setLockedGame(state: any, newValue: Boolean) {
       state.hasLockedGame = newValue
     },
     
-    setSubmittedWords(state, newValue) {
+    setSubmittedWords(state: any, newValue: Array<string>) {
       state.submittedWords = newValue
     }
   }

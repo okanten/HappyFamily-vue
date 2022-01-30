@@ -4,9 +4,11 @@
   </header>
 </template>
 
-<script>
-  import Button from '@/components/input/Button.vue'
-  export default {
+<script lang="ts">
+  import { defineComponent } from 'vue';
+  import Button from '@/components/input/Button.vue';
+
+  export default defineComponent({
     name: 'Header',
     props: {
       title: {
@@ -17,7 +19,7 @@
     components: {
       Button,
     }
-  }
+  })
 </script>
 
 <style scoped>

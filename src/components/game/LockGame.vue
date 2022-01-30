@@ -3,85 +3,84 @@
   <Button :onClick="changeGameStatus" :text="btnLockText" />
 </template>
 
-<script>
-import Button from '@/components/input/Button'
-import Error from '@/components/validation/Error'
-import ApiClient from '@/services/ApiClient'
+<script lang="ts">
+  import { defineComponent } from 'vue'
+  import Button from '@/components/input/Button'
+  import Error from '@/components/validation/Error'
+  import ApiClient from '@/services/ApiClient'
 
-export default {
-  name: 'SubmitWord',
-  components: {
-    Button,
-    Error,
-  },
-  mounted() {
-    if(this.$store.state.gameId == null) { 
-      this.$router.push({ name: "Home" })
-    }
-  },
-  computed: {
-    btnLockText() {
-      if(this.gameLocked) {
-        return "Open game for additional submissions"
-      } else {
-        return "Lock game for further submissions"
-      }
-    }
-  },
-  data() {
-    return {
-      gameLocked: this.$store.state.hasLockedGame,
-      errors: [],
-      success: null,
-    }
-  },
-  methods: {
-    changeGameStatus() {
-
-      // reset errors and success
-      this.errors = []
-      this.success = null      
-
-      const gameId = this.$store.state.gameId
-      let data = { password: this.$store.state.gameIdPassword }
-      
-      if(this.gameLocked) {
-        this.unlockGame(gameId, data)
-      } else {
-        this.lockGame(gameId, data)
+  export default defineComponent({
+    name: 'SubmitWord',
+    components: {
+      Button,
+      Error,
+    },
+    mounted() {
+      if(this.$store.state.gameId == null) { 
+        this.$router.push({ name: "Home" })
       }
     },
-    unlockGame(gameId, data) {
- 
-      ApiClient.openGame(gameId, data)
-      .then((res => {
-        if (res.status === 200 || res.status === 201) {
-          this.gameLocked = false 
-          this.$store.commit('setLockedGame', false)
-          this.success = data.message
+    computed: {
+      btnLockText() {
+        if(this.gameLocked) {
+          return "Open game for additional submissions"
         } else {
-          this.errors.push(data.message)
+          return "Lock game for further submissions"
         }
-      }))
-      .catch(err => console.log(err.message))
+      }
     },
+    data() {
+      return {
+        gameLocked: this.$store.state.hasLockedGame,
+        errors: [],
+        success: null,
+      }
+    },
+    methods: {
+      changeGameStatus() {
+        this.errors = []
+        this.success = null      
 
-    lockGame(gameId, data) {
-      
-      ApiClient.closeGame(gameId, data)
-      .then((res => {
-        if (res.status === 200 || res.status === 201) {
-          this.gameLocked = true
-          this.$store.commit('setLockedGame', true)
-          this.success = res.data.message
+        const gameId: string = this.$store.state.gameId
+        let data: Object = { password: this.$store.state.gameIdPassword }
+        
+        if(this.gameLocked) {
+          this.unlockGame(gameId, data)
         } else {
-          this.errors.push(res.data.message)
+          this.lockGame(gameId, data)
         }
-      }))
-      .catch((e => console.log(e.message)))
-    },
-  }
-}
+      },
+      unlockGame(gameId: string, data: Object) {
+   
+        ApiClient.openGame(gameId, data)
+        .then((res => {
+          if (res.status === 200 || res.status === 201) {
+            this.gameLocked = false 
+            this.$store.commit('setLockedGame', false)
+            this.success = res.data.message
+          } else {
+            this.errors.push(res.data.message)
+          }
+        }))
+        .catch(err => console.log(err.message))
+      },
+
+      lockGame(gameId: string, data: Object) {
+        
+        ApiClient.closeGame(gameId, data)
+        .then((res => {
+          if (res.status === 200 || res.status === 201) {
+            this.gameLocked = true
+            this.$store.commit('setLockedGame', true)
+            this.success = res.data.message
+          } else {
+            this.errors.push(res.data.message)
+          }
+        }))
+        .catch((e => console.log(e.message)))
+      },
+    }
+  })
 </script>
 
 <style scoped>

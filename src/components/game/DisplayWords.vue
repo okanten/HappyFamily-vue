@@ -7,7 +7,8 @@
   </div>
 
 </template>
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue'
 
 import Button from '@/components/input/Button.vue'
 import ApiClient from '@/services/ApiClient'

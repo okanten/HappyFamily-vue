@@ -1,25 +1,24 @@
 import http from './http-common';
 
 class ApiClient {
-
-  
-  createGame() {
+ 
+  createGame(): Promise<any> {
     return http.get("/create")
   }
   
-  getWords(gameId, data) {
+  getWords(gameId: string, data: Object): Promise<any> {
     return http.post(`/game/${gameId}/words`, data)
   }
   
-  openGame(gameId, data) {
+  openGame(gameId: string, data: Object) : Promise<any> {
     return http.post(`/game/${gameId}/open`, data)
   }
 
-  closeGame(gameId, data) {
+  closeGame(gameId: string, data: Object) : Promise<any> {
     return http.post(`/game/${gameId}/close`, data)
   }
 
-  submitWord(gameId, data) {
+  submitWord(gameId: string, data: Object) : Promise<any> {
     return http.post(`/game/${gameId}/add`, data)
   }
   
