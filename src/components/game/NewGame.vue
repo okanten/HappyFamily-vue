@@ -1,73 +1,91 @@
 <template>
-  <h3>The game ID is: <span id="gameId" class="unloaded">{{ gameId }}</span></h3>
+  <h3>The game ID is: <span id="gameId" :class="gameIdClass">{{ gameId }}</span></h3>
   <h4>Share this link to let others join your game: <a :href="gameUrl">{{ gameUrl }}/</a></h4>
   <div v-if="restartGame">
     <Button :onClick="reloadGame" text="Create new game" />
   </div>
 </template>
-<script>
+<script lang="ts">
+  import { defineComponent, ref, onMounted } from 'vue'
+  import Button from '@/components/input/Button.vue'
+  import ApiClient from '@/services/ApiClient'
+  import { useStore } from 'vuex'
+  import { useRouter } from 'vue-router'
+  import { key } from '@/store/index'
+  import { MutationType } from "@/store/mutations";
 
-import Button from '@/components/input/Button.vue'
-import ApiClient from '@/services/ApiClient'
-
-  export default {
+  export default defineComponent({
     name: 'NewGame',
     components: {
       Button
     },
-    mounted() {
-      if (!this.$store.state.gameId) {
-        this.fetchNewGame()
-      } else {
-        this.setLoadedClassList()
-      }
-    },
-    computed: {
-      gameId() {
-        if (!this.$store.state.gameId) {
-          return 'loading...'
-        }
-        return this.$store.state.gameId
-      },
-      instanceUrl() {
-        return this.$store.state.instanceUrl
-      },
-      gameUrl() {
-        if(!this.$store.state.gameId) {
-          return null
-        }
-        return this.$store.state.instanceUrl + "join/" + this.$store.state.gameId
-      }
-    },
-    data() {
-      return {
-        restartGame: false
-      }
-    },
-    methods: {
-      fetchNewGame() {
+    setup() {
+      const store = useStore(key)
+      const router = useRouter()
+      const gameId = ref('loading...')
+      const gameUrl = ref('') 
+      const gameIdClass = ref('unloaded')
+
+      const fetchNewGame = (): void => {
         ApiClient.createGame()
         .then((res => {
           console.log(res)
           if (res.status == 200) {
-            this.$store.commit('setGameId', res.data.id)
-            this.$store.commit('setGamePassword', res.data.password)
-            this.setLoadedClassList()
+            store.commit(MutationType.SetGameId, res.data.id)
+            store.commit(MutationType.SetGamePassword, res.data.password)
+            gameId.value = store.state.gameId
+            gameUrlFunc()
+            setLoadedClassList()
           } else {
             throw new Error(res)
           }
         }))
         .catch((e => console.log(e)))
-      },
-      setLoadedClassList() {
-        document.getElementById("gameId").classList.add("loaded")
-        document.getElementById("gameId").classList.remove("unloaded")
-      },
-      reloadGame() {
-        this.fetchNewGame()
+      }
+
+      const setLoadedClassList = (): void => {
+        gameIdClass.value = 'loaded'
+      }
+
+      const reloadGame = (): void => {
+        fetchNewGame()
+      }
+
+      onMounted(() => {
+        if(store.state.gameId == "") {
+          fetchNewGame()
+        } else {
+          setLoadedClassList()
+        }
+      })
+      
+      const gameIdFunc = (): void => {
+        if (store.state.gameId = "") {
+          gameId.value = 'loading...'
+        }
+        gameId.value = store.state.gameId
+      }
+      
+      const instanceUrl = (): string => {
+        return store.state.instanceUrl
+      }
+      
+      const gameUrlFunc = (): void => {
+        gameUrl.value = store.state.instanceUrl + "join/" + store.state.gameId
+      }
+
+      let restartGame: Boolean = false
+
+      return {
+        gameIdClass,
+        restartGame,
+        gameId,
+        instanceUrl,
+        gameUrl,
+        reloadGame
       }
     }
-  }
+  })
 </script>
 
 <style lang="scss">

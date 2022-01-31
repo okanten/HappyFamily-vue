@@ -8,64 +8,73 @@
 
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
+  import { defineComponent } from 'vue'
 
-import Button from '@/components/input/Button.vue'
-import ApiClient from '@/services/ApiClient'
+  import Button from '@/components/input/Button.vue'
+  import ApiClient from '@/services/ApiClient'
+  import { useStore } from 'vuex'
+  import { key } from '@/store/index'
+  import { MutationType } from "@/store/mutations";
 
-  export default {
+  export default defineComponent({
     name: 'DisplayWords',
     components: {
       Button
     },
-    computed: {
-      words() {
-        return this.$store.state.submittedWords
+    setup() {
+      const store = useStore(key)
+      
+      let btnDisplayWordsText: string = "Display words"
+      let isDisplayingWords: Boolean = false
+      let hasRetrievedWords: Boolean = false
+      
+      const words = (): Array<string> => {
+        return store.state.submittedWords
       }
-    },
-    data() {
-      return {
-        btnDisplayWordsText: 'Display words',
-        isDisplayingWords: false,
-        hasRetrievedWords: false,
+      
+      const hideWords = (): void => {
+        isDisplayingWords = false
       }
-    },
-    methods: {
-      handleClick() {
-        if(this.isDisplayingWords) {
-          this.btnDisplayWordsText = "Display words"
-          this.hideWords()
-        } else {
-          this.displayWords()
-          this.btnDisplayWordsText = "Hide words"
-        }
-      },
-      hideWords() {
-        this.isDisplayingWords = false
-      },
-      displayWords() {
-        if (this.hasRetrievedWords) {
-          this.isDisplayingWords = true
+      
+      const displayWords = (): void => {
+        if (hasRetrievedWords) {
+          isDisplayingWords = true
         } else {    
-          const gameId = this.$store.state.gameId
-          const gameIdPassword = this.$store.state.gameIdPassword
+          const gameId = store.state.gameId
+          const gameIdPassword = store.state.gameIdPassword
 
           ApiClient.getWords(gameId, { password: gameIdPassword })
           .then((res => {
-            if(res.status === 200) {
-              this.success = res.data.message
-              this.$store.commit('setSubmittedWords', res.data.words)
-              this.isDisplayingWords = true
-              this.hasRetrievedWords = true
-            } else {
-              this.errors.push(res.data.message)
+            if(res.status === 200) { 
+              store.commit(MutationType.SetSubmittedWords, res.data.words)
+              isDisplayingWords = true
+              hasRetrievedWords = true
             }
           }))
           .catch((e => console.log(e)))  
         }
       }
-    }
-  }
+
+      const handleClick = (): void => {
+        if(isDisplayingWords) {
+          btnDisplayWordsText = "Display words"
+          hideWords()
+        } else {
+          displayWords()
+          btnDisplayWordsText = "Hide words"
+        }
+      }
+      
+      
+      return {
+        words,
+        handleClick,
+        btnDisplayWordsText,
+        isDisplayingWords,
+      }
+
+    },
+  })
 </script>
 
 <style lang="scss">
