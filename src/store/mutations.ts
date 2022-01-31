@@ -11,7 +11,7 @@ export enum MutationType {
 export type Mutations = {
   [MutationType.SetGameId](state: any, newValue: string): void;
   [MutationType.SetGamePassword](state: any, newValue: string): void;
-  [MutationType.SetSubmittedWord](state: any, newValue: string): void;
+  [MutationType.SetSubmittedWord](state: any, newValue: Boolean): void;
   [MutationType.SetLockedGame](state: any, newValue: Boolean): void;
   [MutationType.SetSubmittedWords](state: any, newValue: Array<string>): void;
 }
@@ -24,16 +24,16 @@ export const mutations: MutationTree<any> & Mutations = {
   [MutationType.SetGamePassword](state, newValue) {
     state.gameIdPassword = newValue
   },
-  
+
   [MutationType.SetSubmittedWord](state, newValue) {
     state.hasSubmittedWord = newValue
   },
 
-  
+
   [MutationType.SetLockedGame](state, newValue) {
     state.hasLockedGame = newValue
   },
-  
+
   [MutationType.SetSubmittedWords](state, newValue) {
     state.submittedWords = newValue
   }

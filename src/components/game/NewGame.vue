@@ -22,8 +22,8 @@
     setup() {
       const store = useStore(key)
       const router = useRouter()
-      const gameId = ref('loading...')
-      const gameUrl = ref('') 
+      const gameId = ref(store.state.gameId)
+      const gameUrl = ref(store.state.instanceUrl + "join/" + store.state.gameId) 
       const gameIdClass = ref('unloaded')
 
       const fetchNewGame = (): void => {

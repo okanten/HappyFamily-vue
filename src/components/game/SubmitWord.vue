@@ -10,60 +10,77 @@
     </div>
 </template>
 
-<script>
-import Textbox from '@/components/input/Textbox'
-import Button from '@/components/input/Button'
-import Error from '@/components/validation/Error'
-import ApiClient from '@/services/ApiClient'
+<script lang="ts">
+  import { defineComponent, ref, onMounted } from 'vue'
+  import Textbox from '@/components/input/Textbox.vue'
+  import Button from '@/components/input/Button.vue'
+  import Error from '@/components/validation/Error.vue'
+  import ApiClient from '@/services/ApiClient'
+  import { useStore } from 'vuex'
+  import { useRouter } from 'vue-router'
+  import { key } from '@/store/index'
+  import { MutationType } from "@/store/mutations";
 
-export default {
-  name: 'SubmitWord',
-  components: {
-    Textbox,
-    Button,
-    Error,
-  },
-  mounted() {
-    if(this.$store.state.gameId == null) { 
-      this.$router.push({ name: "Home" })
-    }
-  },
-  data() {
-    return {
-      txtGameWord: '',
-      errors: [],
-      success: null,
-      submitted: false,
-    }
-  },
-  methods: {
-    onEnter() {
-      this.submitWord()
+  export default defineComponent({
+    name: 'SubmitWord',
+    components: {
+      Textbox,
+      Button,
+      Error,
     },
-    submitWord() {
-      const gameWord = this.txtGameWord
-      this.errors = []
-      this.success = null
-      if (gameWord.length < 1) {
-        this.errors.push("The word cannot be empty")
+    setup() {
+      const store = useStore(key)
+      const router = useRouter()
+
+      const txtGameWord = ref('')
+      const errors = ref([""])
+      const success = ref('')
+      let submitted = ref(store.state.hasSubmittedWord)
+
+      const submitWord = (): void => {
+        console.log("Pressed")
+        const gameWord = txtGameWord.value
+        errors.value = []
+        success.value = ''
+        if (gameWord.length < 1) {
+          errors.value.push("The word cannot be empty")
+        }
+        if (errors.value.length == 0) {
+          const gameId = store.state.gameId
+          ApiClient.submitWord(gameId, { gameWord })
+          .then((res => {
+            if (res.status === 201) {
+              success.value = "Word submitted!"
+              submitted.value = true
+              store.commit(MutationType.SetSubmittedWord, true)
+            } else {
+              errors.value.push(res.data.message)
+            }
+          }))
+          .catch((e => console.log(e)))
+        }
       }
-      if(this.errors.length == 0) {
-        const gameId = this.$store.state.gameId
-        ApiClient.submitWord(gameId, { gameWord })
-        .then((res => {
-          if (res.status === 201) {
-            this.success = "Word submitted!"
-            this.submitted = true
-            this.$store.commit('setSubmittedWord', true)
-          } else {
-            this.errors.push(res.data.message)
-          }
-        }))
-        .catch((e => console.log(e)))
+      
+      const onEnter = (): void => {
+        submitWord()
+      }
+
+      onMounted(() => {
+        if(store.state.gameId == '') {
+          router.push({ name: "Home" })
+        } 
+      }) 
+      
+      return {
+        txtGameWord,
+        errors,
+        success,
+        submitted,
+        onEnter,
+        submitWord,
       }
     },
-  }
-}
+  })
 </script>
 
 <style scoped>

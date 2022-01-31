@@ -4,7 +4,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, onMounted } from 'vue'
+  import { defineComponent, ref, onMounted } from 'vue'
   import Button from '@/components/input/Button.vue'
   import Error from '@/components/validation/Error.vue'
   import ApiClient from '@/services/ApiClient'  
@@ -23,10 +23,10 @@
       const router = useRouter()
       const store = useStore(key)
       
-      
       let gameLocked: Boolean = store.state.hasLockedGame
       let errors: Array<string> = []
       let success: string = ''
+      const btnLockText = ref('Lock game for further submissions')
 
       onMounted(() => { 
         if(store.state.gameId == null) { 
@@ -34,11 +34,11 @@
         }
       }) 
       
-      const btnLockText = (): string => {
+      const btnLockTextFunc = (): void => {
         if(gameLocked) {
-          return "Open game for additional submissions"
+          btnLockText.value = "Open game for additional submissions"
         } else {
-          return "Lock game for further submissions"
+          btnLockText.value = "Lock game for further submissions"
         }
       }
       
@@ -47,6 +47,7 @@
         .then((res => {
           if (res.status === 200 || res.status === 201) {
             gameLocked = false 
+            btnLockTextFunc()
             store.commit(MutationType.SetLockedGame, false)
             success = res.data.message
           } else {
@@ -61,6 +62,7 @@
         .then((res => {
           if (res.status === 200 || res.status === 201) {
             gameLocked = true
+            btnLockTextFunc()
             store.commit(MutationType.SetLockedGame, true)
             success = res.data.message
           } else {
