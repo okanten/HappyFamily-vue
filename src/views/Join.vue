@@ -5,19 +5,21 @@
       <p class="error">{{ error }}</p>
     </div>
     <Textbox :onEnter="joinGame" v-model:textValue="txtGameId" placeholderValue="PaleDisk" />
-    <p>{{ this.$router.query }}</p>
     <Button :onClick="joinGame" text="Join Game" />
   </div>
 </template>
 
-<script>
-import Header from '@/components/Header'
-import Textbox from '@/components/input/Textbox'
-import Button from '@/components/input/Button'
-import { useRoute } from 'vue-router'
+<script lang="ts">
+import { defineComponent, ref, provide, onUpdated, onMounted } from 'vue'
+import Header from '@/components/Header.vue'
+import Textbox from '@/components/input/Textbox.vue'
+import Button from '@/components/input/Button.vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+import { key } from '@/store/index'
 
 
-export default {
+export default defineComponent ({
   name: 'Join',
   components: {
     Header,
@@ -25,69 +27,83 @@ export default {
     Button,
   },
   setup() {
-    const gameIdFromUrl = null;
-  },
-  mounted() {
-    const route = useRoute()  
-    this.gameIdFromUrl = route.params.gameId
-    if (this.gameIdFromUrl != null) {
-      this.txtGameId = this.gameIdFromUrl
-      this.joinGame()
+    const route = useRoute()
+    const router = useRouter()
+    const store = useStore(key)
+    const errors = ref([""])
+    const txtGameId = ref("")
+    
+    const gameIdFromUrl = (): string => {
+      if (route.params.gameId) {
+        return route.params.gameId.toString()
+      }
+      return ''
     }
-  },
-  data() {
-    return {
-      txtGameId: '',
-      errors: []
-    }
-  },
-  computed: {
-    gameIdUrl() {
-      if(this.$store.state.gameId == 'loading...') {
+
+    onMounted(() => {  
+      if (gameIdFromUrl() != '') {
+        txtGameId.value = gameIdFromUrl()
+        joinGame()
+      }
+    })
+
+    const gameIdUrl = (): string => {
+      if(store.state.gameId == 'loading...') {
         return ''
       }
-      return this.$store.state.gameId
-    },
-  },
-  methods: {
-    joinGame() {
-      this.errors.splice(0, this.errors.length)
-      let gameId = this.txtGameId
+      return store.state.gameId
+    }
+    
+    
+    const joinGame = () => {
+      errors.value.splice(0, errors.value.length)
+      let gameId = txtGameId
       if(!gameId) {
-        this.errors.push("Game ID can not be empty")
-      } else if(gameId.length < 3) {
-        this.errors.push("Length must be longer than 3 characters")
-      } else if(/\d/.test(gameId)) {
-        this.errors.push("Game ID cannot contain numbers")
+        errors.value.push("Game ID can not be empty")
+      } else if(gameId.value.length < 3) {
+        errors.value.push("Length must be longer than 3 characters")
+      } else if(/\d/.test(gameId.value)) {
+        errors.value.push("Game ID cannot contain numbers")
       }
-      if(this.errors.length == 0) {
-        this.checkIfGameExists(gameId)
+      if(errors.value.length == 0) {
+        checkIfGameExists(gameId.value)
       }
-    }, 
-    checkIfGameExists(gameId) { 
-      const url = this.$store.state.apiUrl  + "/game/" + gameId + "/check"
+    }
+    
+
+    const checkIfGameExists = (gameId: String) => { 
+      const url = store.state.apiUrl  + "/game/" + gameId + "/check"
         fetch(url)
         .then(res => { 
           if (!res.ok) {
-            this.errors.push("The game does not exist")
+            errors.value.push("The game does not exist")
             throw new Error("HTTP Status: " + res.status)
           }
           return res.json()
         })
         .then (data => {
           if (data.closed) {
-            this.errors.push("That game is closed. Ask the game host to open it again")
+            errors.value.push("That game is closed. Ask the game host to open it again")
           } else {
-            this.$store.commit('setGameId', gameId)
-            this.$router.push({ name: "Game" })
+            store.commit('SET_GAME_ID', gameId)
+            router.push({ name: "Game" })
           }
         })
         .catch(err => {
           console.log(err.message)
         })
     }
-  }
-}
+
+
+    return {
+      joinGame,
+      gameIdUrl,
+      errors,
+      store,
+      txtGameId
+    }
+  },
+})
 </script>
 
 <style scoped>

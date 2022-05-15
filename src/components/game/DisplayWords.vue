@@ -8,7 +8,7 @@
 
 </template>
 <script lang="ts">
-  import { defineComponent } from 'vue'
+  import { defineComponent, ref } from 'vue'
 
   import Button from '@/components/input/Button.vue'
   import ApiClient from '@/services/ApiClient'
@@ -24,21 +24,21 @@
     setup() {
       const store = useStore(key)
       
-      let btnDisplayWordsText: string = "Display words"
-      let isDisplayingWords: Boolean = false
-      let hasRetrievedWords: Boolean = false
+      const btnDisplayWordsText = ref("")
+      const isDisplayingWords = ref(false)
+      const hasRetrievedWords = ref(false)
       
       const words = (): Array<string> => {
         return store.state.submittedWords
       }
       
       const hideWords = (): void => {
-        isDisplayingWords = false
+        isDisplayingWords.value = false
       }
       
       const displayWords = (): void => {
         if (hasRetrievedWords) {
-          isDisplayingWords = true
+          isDisplayingWords.value = true
         } else {    
           const gameId = store.state.gameId
           const gameIdPassword = store.state.gameIdPassword
@@ -47,8 +47,7 @@
           .then((res => {
             if(res.status === 200) { 
               store.commit(MutationType.SetSubmittedWords, res.data.words)
-              isDisplayingWords = true
-              hasRetrievedWords = true
+              isDisplayingWords.value = true
             }
           }))
           .catch((e => console.log(e)))  
@@ -57,14 +56,15 @@
 
       const handleClick = (): void => {
         if(isDisplayingWords) {
-          btnDisplayWordsText = "Display words"
+          btnDisplayWordsText.value = "Display words"
           hideWords()
         } else {
           displayWords()
-          btnDisplayWordsText = "Hide words"
+          btnDisplayWordsText.value = "Hide words"
         }
       }
       
+      handleClick()
       
       return {
         words,

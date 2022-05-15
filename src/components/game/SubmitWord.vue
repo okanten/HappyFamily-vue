@@ -38,7 +38,6 @@
       let submitted = ref(store.state.hasSubmittedWord)
 
       const submitWord = (): void => {
-        console.log("Pressed")
         const gameWord = txtGameWord.value
         errors.value = []
         success.value = ''

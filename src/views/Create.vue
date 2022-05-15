@@ -4,7 +4,7 @@
     <NewGame /> 
     <div v-if="!hasSubmitted">
       <p>Not submitted</p>
-      <Button :onClick="readySubmit" :text="readySubmitText" />
+      <Button :onClick="readySubmit" :text="readySubmitText()" />
     </div>
     <div v-if="isReadyToSubmit">
       <SubmitWord />
@@ -12,14 +12,14 @@
     <div v-if="hasSubmitted">
       <LockGame />
     </div>
-    <div v-if="hasLockedGame">
+    <div v-if="checkIfLocked()">
       <DisplayWords />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref, onMounted } from 'vue'
+  import { defineComponent, ref, provide, onUpdated } from 'vue'
   import Header from '@/components/Header.vue'
   import NewGame from '@/components/game/NewGame.vue'
   import Button from '@/components/input/Button.vue'
@@ -48,15 +48,29 @@
       const hasSubmitted = ref(store.state.hasSubmittedWord)
       const hasLockedGame = ref(store.state.hasLockedGame)
       let isReadyToSubmit = ref(false)
-      const readySubmitText = ref('I am ready to submit my word')
+      //let readySubmitText = ref("")
+      // const readySubmitText = ref('I am ready to submit my word')
+
+      onUpdated(() => {
+        console.log("Main updated")
+      })
 
       const readySubmit = (): void => {
         isReadyToSubmit.value = !(isReadyToSubmit.value)
         if (isReadyToSubmit.value) {
-          readySubmitText.value = 'Hide my word!'
-        } else {
-          readySubmitText.value = 'I am ready to submit my word'
+          hasSubmitted.value = true
         }
+      }
+      
+      const checkIfLocked = (): Boolean => {
+        return store.state.hasLockedGame
+      }
+      
+      const readySubmitText = (): string => {
+        if(isReadyToSubmit.value) {
+          return "Hide my word!"
+        }
+        return "I am ready to submit my word"
       }
 
       return {
@@ -67,6 +81,7 @@
         readySubmitText,
         isReadyToSubmit,
         readySubmit,
+        checkIfLocked,
       }
     },
   })

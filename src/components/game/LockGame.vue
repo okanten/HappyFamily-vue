@@ -4,7 +4,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref, onMounted } from 'vue'
+  import { defineComponent, ref, onMounted, onUpdated } from 'vue'
   import Button from '@/components/input/Button.vue'
   import Error from '@/components/validation/Error.vue'
   import ApiClient from '@/services/ApiClient'  
@@ -23,10 +23,13 @@
       const router = useRouter()
       const store = useStore(key)
       
-      let gameLocked: Boolean = store.state.hasLockedGame
-      let errors: Array<string> = []
-      let success: string = ''
-      const btnLockText = ref('Lock game for further submissions')
+      const gameLocked = ref(store.state.hasLockedGame)
+      // const errors: Array<string> = []
+      const errors = ref([""])
+      const success = ref("")
+      //let success: string = ''
+
+
 
       onMounted(() => { 
         if(store.state.gameId == null) { 
@@ -34,24 +37,29 @@
         }
       }) 
       
-      const btnLockTextFunc = (): void => {
-        if(gameLocked) {
-          btnLockText.value = "Open game for additional submissions"
-        } else {
-          btnLockText.value = "Lock game for further submissions"
+      onUpdated(() => {
+        gameLocked.value = store.state.hasLockedGame
+      })
+      
+      const btnLockTextFunc = (): string => {
+        if(gameLocked.value) {
+          return "Open game for additional submissions"
         }
+        return "Lock game for further submissions"
       }
+
+      const btnLockText = ref(btnLockTextFunc())
       
       const unlockGame = (gameId: string, data: Object): void => {
         ApiClient.openGame(gameId, data)
         .then((res => {
           if (res.status === 200 || res.status === 201) {
-            gameLocked = false 
-            btnLockTextFunc()
+            gameLocked.value = false 
+            btnLockText.value = btnLockTextFunc()
             store.commit(MutationType.SetLockedGame, false)
-            success = res.data.message
+            success.value = res.data.message
           } else {
-            errors.push(res.data.message)
+            errors.value.push(res.data.message)
           }
         }))
         .catch(err => console.log(err.message))
@@ -61,25 +69,25 @@
         ApiClient.closeGame(gameId, data)
         .then((res => {
           if (res.status === 200 || res.status === 201) {
-            gameLocked = true
-            btnLockTextFunc()
+            gameLocked.value = true
+            btnLockText.value = btnLockTextFunc()
             store.commit(MutationType.SetLockedGame, true)
-            success = res.data.message
+            success.value = res.data.message
           } else {
-            errors.push(res.data.message)
+            errors.value.push(res.data.message)
           }
         }))
         .catch((e => console.log(e.message)))
       }
 
       const changeGameStatus = (): void => {
-        errors = []
-        success = ''
+        errors.value = []
+        success.value = ''
 
         const gameId: string = store.state.gameId
-        let data: Object = { password: store.state.gameIdPassword }
+        const data: Object = { password: store.state.gameIdPassword }
         
-        if(gameLocked) {
+        if(gameLocked.value) {
           unlockGame(gameId, data)
         } else {
           lockGame(gameId, data)

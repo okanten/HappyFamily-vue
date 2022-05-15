@@ -5,10 +5,10 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
   import { defineComponent, ref, onMounted } from 'vue'
-  import Header from '@/components/Header'
-  import SubmitWord from '@/components/game/SubmitWord'
+  import Header from '@/components/Header.vue'
+  import SubmitWord from '@/components/game/SubmitWord.vue'
   import { useStore } from 'vuex'
   import { useRouter } from 'vue-router'
   import { key } from '@/store/index'
@@ -20,8 +20,7 @@
       Header,
       SubmitWord,
     },
-    setup() {
-      
+    setup() { 
       const router = useRouter()
       const store = useStore(key)
       const txtGameWord = ref('')
@@ -34,8 +33,7 @@
       
       return {
         txtGameWord,
-      }
- 
+      } 
     },
   })
 </script>

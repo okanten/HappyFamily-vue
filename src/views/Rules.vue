@@ -64,9 +64,9 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 
-import Header from '@/components/Header'
+import Header from '@/components/Header.vue'
 
 export default {
   name: 'Home',
