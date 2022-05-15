@@ -1,7 +1,7 @@
 <template>
   <Button :onClick="handleClick" :text="btnDisplayWordsText" /> 
-  <div v-if="isDisplayingWords"> 
-    <div v-for="(word, index) in words" :key="index"> 
+  <div v-if="isDisplayingWords">
+    <div v-for="(word, index) in words()" :key="index"> 
       <p>{{ word }}</p>
     </div>
   </div>
@@ -29,7 +29,7 @@
       const hasRetrievedWords = ref(false)
       
       const words = (): Array<string> => {
-        return store.state.submittedWords
+        return JSON.parse(JSON.stringify(store.state.submittedWords))
       }
       
       const hideWords = (): void => {
@@ -37,7 +37,7 @@
       }
       
       const displayWords = (): void => {
-        if (hasRetrievedWords) {
+        if (hasRetrievedWords.value) {
           isDisplayingWords.value = true
         } else {    
           const gameId = store.state.gameId
@@ -47,6 +47,7 @@
           .then((res => {
             if(res.status === 200) { 
               store.commit(MutationType.SetSubmittedWords, res.data.words)
+              words()
               isDisplayingWords.value = true
             }
           }))
@@ -55,7 +56,7 @@
       }
 
       const handleClick = (): void => {
-        if(isDisplayingWords) {
+        if(isDisplayingWords.value) {
           btnDisplayWordsText.value = "Display words"
           hideWords()
         } else {
