@@ -1,19 +1,9 @@
-# knowyourfamily-vue
+# HappyFamily-vue
 
-## Project setup
-```
-yarn install
-```
+Frontend for the game Happy Family written in Vue3 with Vuex and TypeScript
 
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
+## What is Happy Family?
 
-### Compiles and minifies for production
-```
-yarn build
-```
+Happy Family is a social game where every participant writes down a word or a phrase. The gist of the game is to guess who wrote down which word and expand your family.
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+
