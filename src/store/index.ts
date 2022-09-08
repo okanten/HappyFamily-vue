@@ -23,8 +23,8 @@ export const store = createStore<State>({
     hasSubmittedWord: false,
     hasLockedGame: false,
     submittedWords: [],
-    instanceUrl: 'http://localhost:8080/',
-    apiUrl: 'http://localhost:8000'
+    instanceUrl: 'https://rusa.no/',
+    apiUrl: 'https://api.rusa.no'
   },
   mutations,
 })
