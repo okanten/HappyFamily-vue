@@ -56,7 +56,13 @@
               errors.value.push(res.data.message)
             }
           }))
-          .catch((e => console.log(e)))
+          .catch(function (error) {
+            console.log(error)
+            console.log(error.response)
+            if (error.response) {
+              errors.value.push(error.response.data.message)
+            }
+          })
         }
       }
       
