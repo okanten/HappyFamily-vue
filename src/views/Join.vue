@@ -4,7 +4,7 @@
     <div v-for="(error, index) in errors" :key="index">
       <p class="error">{{ error }}</p>
     </div>
-    <Textbox :onEnter="joinGame" v-model:textValue="txtGameId" placeholderValue="PaleDisk" />
+    <Textbox :onEnter="joinGame" v-model:textValue="txtGameId" placeholderValue="333B444" />
     <Button :onClick="joinGame" text="Join Game" />
   </div>
 </template>
@@ -62,8 +62,6 @@ export default defineComponent ({
         errors.value.push("Game ID can not be empty")
       } else if(gameId.value.length < 3) {
         errors.value.push("Length must be longer than 3 characters")
-      } else if(/\d/.test(gameId.value)) {
-        errors.value.push("Game ID cannot contain numbers")
       }
       if(errors.value.length == 0) {
         checkIfGameExists(gameId.value)
